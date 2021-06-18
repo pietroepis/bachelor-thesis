@@ -1,0 +1,182 @@
+\chapter{Continuos Time Bayesian Networks}
+  \label{chapter_ctbn}
+  \section{Introduzione}
+  \paragraph{}
+  In questo capitolo viene presentato il modello delle \textbf{Continuous Time Bayesian Networks (CTBN)} e la sua semantica.\\
+  Questo modello è costruito sulla base dei concetti esposti in relazione ai \textit{Processi Markoviani a Tempo Continuo},
+  riprendendo inoltre la definizione delle \textit{Bayesian Networks} per sfruttarne la rappresentazione compatta.
+  
+  \paragraph{}
+  Nonostante anche le \textit{Dynamic Bayesian Networks} consentano di modellare una rete che progredisce
+  nel tempo, tracciandone lo stato ad istanti successivi, esse non rappresentano esplicitamente il concetto del tempo. 
+  Nelle \textit{DBN}, infatti, le variabili sono indicizzate stabilendo un ordinamento, ma non è presente alcun riferimento 
+  all'istante temporale effettivo a cui esse appartengono. 
+  Conseguentemente, tale prerogativa fa sì che nelle reti dinamiche il tempo venga regolarmente suddiviso in intervalli di ampiezza costante, 
+  comportando limitazioni significative all'efficacia e all'applicabilità di tale modello, precludendo ad esempio la possibilità che i diversi processi 
+  evolvano con granularità temporali differenti, oppure che le osservazioni avvengano ad intervalli irregolari.\\
+  L'elusione di queste limitazioni richiederebbe di rappresentare l'intero sistema con la più piccola granularità
+  possibile, implicando quindi di includere anche istanti temporali intermedi in cui non è occorsa nessuna
+  osservazione.\\
+  Le CTBN consentono perciò di superare tali limiti, basandosi sui processi Markoviani ma mantenendo
+  le idee fondanti delle \textit{DBN}.
+
+  \begin{definition}[Continuous Time Bayesian Networks] \cite{nodelman-2002}
+    Sia \textit{\textbf{X}} un insieme di variabili $X_1, X_2, ..., X_n$, dove ciascuna variabile rappresenta
+    un processo Markoviano a tempo continuo.\\
+    Una Continuous Time Bayesian Network $\mathcal{N}$ su \textit{\textbf{X}} è definita da:
+    \begin{itemize}
+      \item Una distribuzione iniziale $\mathcal{B}_0$, rappresentata come rete Bayesiana
+      \item Un modello di transizione, costituito da:
+      \begin{itemize}
+        \item Un grafo $\mathcal{G}$ sulle variabili in \textit{\textbf{X}}
+        \item Una \textit{Conditional Intensity Matrix} $Q_{X|Pa(X)}$ per ciascuna variabile in \textit{\textbf{X}}
+      \end{itemize}
+    \end{itemize}
+  \end{definition}
+
+  \paragraph{}
+  Come già anticipato in precedenza nel contesto dei \textit{Conditional Markov Processes},
+  la presenza di un arco da X ad Y rappresenta la dipendenza delle intensità di transizione
+  di Y dai valori assunti da X.\\
+  È importante sottolineare come nelle CTBN, a differenza delle reti Bayesiane classiche,
+  non sia necessario imporre che il grafo sia aciclico.
+  Infatti, anche se esiste un arco \textit{(X, Y)} che denota l'influenza di Y nell'evoluzione di X,
+  è concettualmente ammissibile che la transizione di Y possa dipendere a sua volta da X,
+  implicando l'esistenza di un arco \textit{(Y, X)}.  
+
+  \section{Campionamento}
+  \paragraph{}
+  Il modello delle CTBN prevede un'assunzione fondamentale, la quale impone che una ed una sola variabile 
+  possa effettuare una transizione verso un nuovo stato in uno specifico istante temporale. 
+  Questo vincolo ha un'importante implicazione dal punto di vista semantico, dal momento che può essere visto come 
+  la formalizzazione del fatto che ciascuna variabile riflette un aspetto della realtà atomico e distinto rispetto alle altre variabili.
+  Non sarebbe quindi né significativo, né realistico, usare le CTBN per modellare un dominio in cui più variabili possono cambiare stato nello stesso istante.
+  
+  \paragraph{}
+  Dopo aver introdotto tutte le definizioni e i concetti teorici necessari, viene ora mostrata,
+  in forma di pseudo-codice, la procedura che costituisce il cuore del lavoro svolto durante lo stage,
+  e conseguentemente di questa tesi, che ha lo scopo di simulare l'evoluzione dello stato delle variabili della rete,
+  campionando casualmente una \textit{traiettoria}.
+
+  \begin{algorithm}
+    \DontPrintSemicolon
+    \SetKwFunction{FMain}{CTBN\_Sample}
+    \SetKwProg{Fn}{Procedure}{:}{}
+    \Fn{\FMain{$t_{end}$}}{
+      t $\leftarrow$ 0, 
+      $\sigma$ $\leftarrow$ $\emptyset$\;
+      \;
+      \ForEach{$\textit{X} \in \mathbf{X}$}
+        {Scegli $x(0)$ dato $\bm{\theta}^{\mathcal{B}}_{X \; | \; \mathbf{Pa}_{\mathcal{B}}(X)}$}
+      \;
+      \While {true}{
+        \ForEach{$\textit{X} \in \mathbf{X}$}{
+          \uIf{Time(X) \textbf{is} \textit{undefined}}{
+            $\Delta t$ $\leftarrow$ $random\_exponential(q_{x(t) \; | \; u_x(t)})$\;
+            $Time(X)$ $\leftarrow$ t + $\Delta t$
+          }
+        }
+        \;
+        $X_{tr}$ $\leftarrow$ $arg \; min_{Y \in \bm{X}}$[Time(Y)]\;
+        t $\leftarrow$ Time($X_{tr}$)\;
+        \;
+        \eIf{$t \geq t_{end}$}{
+          \KwRet $\sigma$\;
+        }{
+          $x_{tr}(t) \leftarrow random\_multinomial(\bm{\theta}_{x(t) \; | \; u_x(t)})$\;
+          Aggiungi $\langle t, x_1(t), x_2(t), ..., x_{tr}(t), ..., x_n(t) \rangle$ a $\sigma$
+        }
+        \;
+        
+        \ForEach{$Y \in \{\mathbf{Pa}(X_{tr}) \cup X_{tr}\}$}{
+          $Y(t) \leftarrow undefined$\;
+        }
+      }
+    }
+    
+    \captionof{algocf}{Procedura CTBN\_Sample}
+    \label{alg:ctbn_sample}
+  \end{algorithm}
+
+  Il metodo \textit{CTBN\_Sample}, quindi, restituisce come risultato una traiettoria che parte dall'istante $t_0 = 0$
+  e tale per cui l'istante temporale associato all'ultima occorrenza che è stata campionanta è minore o uguale al parametro $t_{end}$
+  specificato.\
+
+  \subsection{Interpretazione dello pseudo-codice}
+  Questa sezione si occupa di analizzare e spiegare le istruzioni dell'Algoritmo \ref{alg:ctbn_sample}.\\
+  La procedura si occupa, in fase di inizializzazione nelle righe da \textit{2} a \textit{6}, 
+  di assegnare il valore $0$ alla variabile $t$, che rappresenta l'istante temporale corrente, e di definire la traiettoria $\sigma$
+  come insieme vuoto $\emptyset$.\\
+  Si è deciso di rappresentare la traiettoria come un insieme, quindi senza un ordinamento, in quanto
+  ciascun elemento appartenente ad esso include l'informazione temporale corrispondente. 
+  Una rappresentazione equivalentemente consisterebbe in una sequenza ordinata di n-uple.\\
+  A riga \textit{5} si valorizzano le variabili all'istante $t=0$, infatti $\theta^{\mathcal{B}}_{X \; | \; \mathbf{Pa}_{\mathcal{B}}(X)}$
+  indica la distribuzione di probabilità iniziale della variabile $X$ dati i suoi genitori.\\ 
+  La parte più significativa della procedura, ovvero il campionamento vero e proprio della 
+  traiettoria, è data dalla ripetizione del blocco di istruzioni definite nel corpo
+  del ciclo \textit{while} che inizia a riga \textit{8}.\\
+  Premesso che con $Time(X)$ ci si riferisce all'istante temporale in cui $X$ effettuerà la prossima transizione di stato,
+  la prima operazione che viene svolta all'inizio di ciascuna iterazione ha lo scopo di determinare $Time(X)$
+  per ogni variabile $X$ tale per cui esso non sia già definito. Come verrà spiegato successivamente,
+  l'insieme delle variabili il cui tempo di transizione è indefinito è costituito
+  dalla variabile che ha cambiato stato all'iterazione immediatamente precedente a quella corrente, unitamente alle 
+  variabili che dipendono da essa (in altre parole le sue figlie).\\
+  Per calcolare $Time(X)$ si somma al tempo corrente $t$ un valore $\Delta t$ estratto in 
+  modo casuale da una distribuzione esponenziale di parametro $q_{x(t) \; | \; u_x(t)}$.
+  La distribuzione esponenziale si addice a questo scopo (e in generale ai domini in cui si rappresenta il tempo rimanente
+  prima che si verifichi un evento) in quanto gode della proprietà di \textit{assenza di memoria},
+  che stabilisce che il tempo trascorso non influisce sulla probabilità che l'evento si verifichi.
+  Tale proprietà viene formalizzata come segue:
+  \begin{equation}
+    P(X > m + n \; | \; X > m) = P(X > n)  
+  \end{equation}
+  Questo paramentro consiste chiaramente nel coefficiente della CIM che si trova alla
+  riga associata allo stato attuale della variabile, in corrispondenza della diagonale.
+  Come spiegato nella trattazione sulle \textit{CIM}, l'interpretazione di questo coefficiente è
+  riconducibile alla probabilità di lasciare lo stato corrente.\\
+  Acclarato che $Time(X)$ risulta ora definito per ogni nodo appartenente alla rete,
+  si procede ad identificare la variabile che verrà coinvolta per prima in un cambio di stato, ovvero quella 
+  caratterizzata dal minor tempo di transizione associato. Ciò è formalizzato attraverso 
+  l'espressione a riga \textit{15}, denotando con $X_{tr}$ la variabile identificata per la transizione.\\
+  Si simula quindi un avanzamento nel tempo, un'evoluzione, aggiornando l'istante temporale corrente
+  all'istante in cui avviene la transizione della variabile prescelta. A questo punto,
+  se questa progressione implicasse il raggiungimento o eventualmente il superamento del tempo massimo
+  $t_{end}$, la procedura terminerebbe ritornando la traiettoria generata fino a quel momento.
+  Il raggiungimento del tempo massimo stabilito costituisce quindi la condizione di uscita del loop di generazione 
+  della traiettoria.\\
+  Se invece questa condizione non è verificata, si procede all'effettivo cambio di stato della
+  variabile identificata in precedenza. 
+  Nel caso generale di variabili con cardinalità \textit{n}, il nuovo valore viene
+  determinato casualmente estraendolo da una multinomiale con parametri $\theta_{x(t) \; | \; u_x(t)}$.
+  La distribuzione multinomiale consiste in una generalizzazione della distribuzione binomiale, in cui le variabili
+  possono assumere solo i valori 0 e 1, al caso in cui ciascuna variabile può assumere $k$ diversi valori.
+  I coefficienti $\theta_{x(t) \; | \; u_x(t)}$ utilizzati per la multinomiale sono interpretabili come l'insieme di probabilità
+  che la variabile $X$ effettui una transizione verso ciascuno dei possibili stati, dato l'insieme delle istanze dei genitori $u_x(t)$. 
+  Da un punto di vista pratico, questi coefficienti costituiscono la riga della \textit{CIM} corrispondente all'attuale valore della variabile,
+  previa normalizzazione (in modo che la somma dei coefficienti che la compongono sia 1).\\
+  Poiché la variabile che compie la transizione non può mantenere lo stato corrente, è necessario avere cura di 
+  azzerare la probabilità che lo stato estratto corrisponda a quello attuale (ovvero il valore proveniente dal coefficiente che si trova sulla diagonale).\\
+  Questo accorgimento, unitamente all'identificazione di una sola variabile per ciascuna iterazione, è necessario per soddisfare 
+  il vincolo precedentemente introdotto in relazione al fatto che esattamente una variabile cambi stato in un dato istante.\\
+  È possibile asserire che nel caso particolare di variabili binarie, ossia con cardinalità 2, la transizione è 
+  implementabile semplicemente negando lo stato corrente tramite la formula
+
+  \begin{equation}
+    x_{tr}(t) = 1 - x_{tr}(t-1)  
+  \end{equation}
+
+  Una volta realizzata la transizione effettiva di $X_{tr}$, si ottiene una nuova istanza che viene aggiunta alla traiettoria,
+  interpretabile come una descrizione dello stato di $\bm{X}$, ovvero di tutte le variabili appartenenti
+  alla rete, all'istante temporale corrente \textit{t}. Questa rappresentazione
+  viene implementata come una sequenza ordinata in cui si pone in prima posizione
+  l'istante temporale a cui si riferisce la situazione descritta, seguito dallo
+  stato attuale di tutte le \textit{n} variabili della rete (riga \textit{22}).\\
+  Il \textit{foreach} finale a riga \textit{25} si occupa di reimpostare ad \textit{undefined} 
+  il tempo di transizione della variabile $X_{tr}$ che ha appena cambiato stato nell'iterazione corrente,
+  e di tutte le variabili che hanno un arco entrante che parte da essa, quindi dipendenti.
+  Ciò permette di fare in modo che alla successiva iterazione venga determinato un nuovo
+  istante temporale per la transizione di queste variabili, come illustrato in precedenza.\\
+  L'implementazione effettiva integrata nella libreria \textit{PyCTBN}
+  è stata arricchita di alcune estensioni e funzionalità, che verranno descritte
+  nella sezione dedicata, la quale si occupa inoltre di mostrare in termini attuativi
+  quanto introdotto con lo pseudo-codice.

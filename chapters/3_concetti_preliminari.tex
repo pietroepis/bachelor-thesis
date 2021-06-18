@@ -1,0 +1,233 @@
+\chapter{Concetti Preliminari}
+  \label{chapter_concetti_preliminari}
+  \paragraph{}
+  Questo capitolo ha lo scopo di introdurre le nozioni fondamentali su cui si
+  basano le Continuous Time Bayesian Network (\textbf{CTBN}).
+
+  \section{Definizioni e Notazione}
+  \paragraph{}
+  Vengono inizialmente fornite le definizioni essenziali e presentate le notazioni convenzionalmente 
+  adottate ed utilizzate nel corso dei capitoli successivi.
+
+  \paragraph{Variabile di Processo} \cite{nodelman-2007}
+  Una variabile di processo può essere considerata come una collezione di variabili aleatorie
+  indicizzate rispetto al tempo continuo e viene indicata con lettere maiuscole.
+  e.g. \textit{E}, \textit{$X_i$}.\\    
+  Di conseguenza ci si riferisce alle normali variabili aleatorie con un indice temporale,
+  e.g. \textit{$X_{i}(t)$}, \textit{$E_t$}
+
+  \paragraph{Valori delle Variabili}
+  Il valore assunto da una variabile è indicato dalla relativa lettera minuscola, e.g. \textit{Z = z}, oppure
+  $z_1$, $z_2$, ..., $z_n$ per riferirsi a valori diversi.\\
+  L'insieme delle possibili istanze di una variabile \textit{Z} è denotato da \textit{Val(Z)},
+  e il numero delle istanze (ovvero la cardinalità dell'insieme) si indica con \textit{Card(Z)}.
+
+  \paragraph{Insiemi di Variabili}
+  Insiemi di variabili sono denotati da lettere maiuscole e in grassetto (e.g. \textit{\textbf{E}},
+  \bm{$V$}) e i relativi valori con le corrispondenti lettere minuscole (e.g. \textit{\textbf{e}},
+  \bm{$v$}).
+
+  \paragraph{Distribuzione di Probabilità}
+  La distribuzione di probabilità associata ai valori di una variabile aleatoria \textit{$X(t)$} è denotata
+  equivalentemente da \textit{P(X(t))} o da \textit{$P_{x}(t)$}. Nel caso della distribuzione iniziale, ovvero
+  quando \textit{t = 0}, si usa scrivere \textit{$P_{x}^{0}$}.\\
+  La distribuzione di probabilità condizionata di \textit{X(t)} dato \textit{X(s)} è denotata da
+  $P(X(t) \; | \; X(s))$
+
+  \paragraph{Genitori}
+  Dato un grafo $\mathcal{G}$, si indica con $\mathbf{Pa}_{\mathcal{G}}(X_i)$ l'insieme dei nodi
+  genitori della variabile \textit{$X_i$}.\\
+  Similmente, l'insieme dei nodi figli di \textit{$X_i$} è rappresentato da $\mathbf{Cd}_{\mathcal{G}}(X_i)$.
+
+  \paragraph{Densità di un Grafo} \cite{graphs}
+  Dato un grafo orientato $\mathcal{G} = (V, \; E)$, dove $V$ sono i nodi ed $E$ gli archi, la densità $d$ è definita come
+  il rapporto tra il numero di archi effettivi ($\lvert E \lvert$) e il numero massimo di archi che $\mathcal{G}$ avrebbe 
+  se fosse un grafo completo. Formalmente:
+  \begin{equation} \label{eq:density}
+    d = \frac{\vert E \vert}{\vert V \vert (\vert V \vert - 1)}
+  \end{equation}
+
+  \section{Bayesian Networks} 
+  Il concetto principale su cui si basano le \textbf{Reti Bayesiane (BN)} è l'indipendenza condizionale, 
+  definita come segue.
+
+  \begin{definition}[Indipendenza Condizionale] \cite{conditional-independence}
+    Due variabili aleatorie \textit{$B_1$} e \textit{$B_2$} si dicono condizionalmente indipendenti,
+    dato un insieme di variabili aleatorie \textit{\textbf{C}}, se e solo se
+    \begin{equation}
+      P(B_1 \; | \; \bm{C}, B_2) = P(B_1 \; | \; \bm{C})
+    \end{equation}
+  \end{definition}
+
+  Intuitivamente ciò significa che, per ogni possibile valore delle variabili \textit{\textbf{C}},
+  \textit{$B_1$} e \textit{$B_2$} non hanno influenza l'una sull'altra,
+  o analogamente che la loro influenza è mediata dalle variabili in \textit{\textbf{C}}.\\
+  È ragionevole pensare che la maggior parte delle variabili in una certa rete non abbia un'influenza
+  diretta su gran parte delle altre, ma piuttosto che ciascuna variabile sia direttamente condizionata 
+  da un sottoinsieme limitato delle altre variabili.\\
+  È a questo punto possibile definire formalmente una rete Bayesiana.
+
+  \begin{definition}[Bayesian Network] \cite{bn}
+    Una Rete Bayesiana $\mathcal{B}$, definita su un insieme di variabili aleatorie \textit{\textbf{B}},
+    è costituita da:
+    \begin{itemize}
+      \item Un grafo diretto aciclico (DAG) $\mathcal{G}$ in cui ciascun nodo è associato
+        ad una variabile \textit{$B_i$} $\in$ \textit{\textbf{B}}
+      \item Per ciascuna variabile \textit{$B_i$}, una distribuzione di probabilità condizionata (CPD) 
+        $P(B_i \; | \; \mathbf{Pa}_{\mathcal{G}}(B_i))$ che formalizza la dipendenza diretta di \textit{$B_i$}
+        dall'insieme dei suoi genitori.
+    \end{itemize}
+  \end{definition}
+
+  Una rete Bayesiana rappresenta quindi una distribuzione congiunta di probabilità,
+  che sfruttando la \textit{Chain Rule} può essere espressa come prodotto di fattori:
+  \begin{equation}
+    P(B_1, B_2, ..., B_n) = \prod_{i=1}^{n} P(B_i \; | \; \mathbf{Pa}_{\mathcal{G}}(B_i))  
+  \end{equation}
+
+  Il grafo $\mathcal{G}$ associato alla rete incorpora anche informazioni riguardanti l'indipendenza
+  condizionale tra le variabili, in particolare il fatto che una variabile \textit{$B_i$} $\in$ \textit{\textbf{B}}
+  è indipendente dalle variabili che non sono sue discendenti, dato $\mathbf{Pa}_{\mathcal{G}}(B_i)$
+
+  \subsection{Dynamic Bayesian Networks}
+  Le \textbf{Reti Bayesiane Dinamiche (DBN)} sono uno strumento che permette di modellare
+  processi stocastici a \textbf{tempo discreto} (o \textit{time sliced}).
+  Lo stato della rete a ciascun istante di tempo, quindi, è descritto da un insieme
+  di variabili aleatorie \textit{\textbf{D}}. 
+  Indicizzando gli insiemi di variabili rispetto al tempo, si ottiene che l'intera collezione di variabili è 
+  perciò costituita dall'insieme \{$\bm{D_0}$, $\bm{D_1}$, ..., $\bm{D_n}$\},
+  dove ciascun elemento $D_i$ denota l'insieme delle variabili della rete all'istante \textit{i}.\\
+  Formalmente, una rete Bayesiana dinamica è definita come segue.
+
+  \begin{definition}[Dynamic Bayesian Network]  \cite{nodelman-2007}
+    Una rete Bayesiana dinamica è una coppia $\langle\mathcal{B}_0, \mathcal{B}_{2T}\rangle$,
+    dove $\mathcal{B}_0$ è la rete Bayesiana basata sulle variabili in $\bm{D_0}$, e $\mathcal{B}_{2T}$
+    (chiamato \textbf{2TBN}, 2 Time Slice Bayesian Network) fornisce un modello di transizione dall'istante \textit{i} all'istante \textit{i+1}.\\
+    In particolare, $\mathcal{B}_{2T}$ consiste in una rete Bayesiana costituita dalle variabili in $\bm{D_{i+1}}$ 
+    condizionate dalle variabili in $\bm{D_i}$.\\
+    Gli archi di questa rete vengono classificati in due categorie:
+    \begin{itemize}
+      \item \textbf{Intra}-time-slice: sono consentiti solo tra variabili appartenenti allo stesso 
+        istante temporale, e.g. (X, Y) per X, Y $\in$ \bm{$D_i$}
+      \item \textbf{Inter}-time-slice: connettono una variabile nel contesto di un istante temporale ad
+        una dell'istante successivo (eventualmente anche la stessa), e.g. (X $\in$ \bm{$D_i$}, X $\in$ \bm{$D_{i+1}$})
+    \end{itemize}
+  \end{definition}
+
+  \section{Continuous Time Markov Processes}
+  Un ulteriore elemento necessario per poter introdurre le reti Bayesiane a tempo continuo consiste nei
+  processi Markoviani a tempo continuo (\textbf{Continuous Time Markov Processes}), che derivano dall'aggiunta
+  di un'assunzione (assunzione di Markov) ai processi stocastici a tempo continuo.
+  
+  \begin{definition}[Processo stocastico a tempo continuo] \cite{stochastic-processes}
+    Si definisce processo stocastico (o aleatorio) a tempo continuo una collezione di variabili aleatorie
+    indicizzate rispetto al tempo $\bm{t \in [0, \infty)}$.\\
+    Si consideri la variabile \textit{X} in relazione a tutti i valori di \textit{t} come 
+    un'unica variabile (\textbf{Process Variable}).
+  \end{definition}
+
+  Definiamo quindi l'assunzione di Markov, da applicare al concetto di processo stocastico a tempo continuo.
+
+  \begin{assumption}[Assunzione di Markov] \cite{ctmp}
+    Si assume che, in un processo stocastico, il valore futuro sia indipendente da quello passato, dato il valore presente.\\
+    Formalmente, un processo \textit{X} soddisfa l'assunzione di Markov se e solo se
+    \begin{equation}
+      P(X_{t+\Delta t} \; | \; X_t, X_s) = P(X_{t+\Delta t} \; | \; X_t)
+    \end{equation}
+    \[
+      \forall s, t \; | \; s<t<\infty
+    \]
+  \end{assumption}
+
+  \paragraph{}
+  In altre parole, l'assunzione di Markov implica che la transizione verso un nuovo stato dipenda esclusivamente dallo stato immediatamente precedente,
+  e non da come si è giunti ad esso, garantendo quindi la cosiddetta \textit{memoryless property}.
+  
+  \begin{definition}[Processo Omogeneo] \cite{markov-chains}
+    Un processo Markoviano si dice omogeneo se la probabilità di transizione $P(X_{t+1} = b \; | \; X_t = a)$ non dipende
+    dall'istante temporale \emph{t} ma esclusivamente dagli stati \emph{a} e \emph{b}.\\
+    In un processo di Markov omogeneo, quindi, la probabilità di transizione dallo stato \emph{a} allo 
+    stato \emph{b} è costante nel tempo.
+  \end{definition}
+
+  \paragraph{}
+  È ora possibile fornire la definizione di \textbf{traiettoria}, elemento centrale nel contesto di questa tesi, 
+  che verrà ripreso dettagliatamente nel seguito.
+
+  \begin{definition}[Traiettoria]
+    Una specifica istanza dei valori di una variabile $X_t$, per ogni \textit{t}, prende il nome di traiettoria.  
+  \end{definition}
+
+  \paragraph{Rappresentazione del processo Markoviano}
+    Un processo di questo tipo è generalmente definito da una \textit{distribuzione iniziale} e da una
+    \textbf{matrice di intensità di transizione}, concetto che sarà fondamentale anche nell'ambito delle
+    CTBN.\\
+    È previsto che gli elementi della matrice che si trovano sulla diagonale principale abbiano valore negativo, mentre
+    gli altri devono essere non negativi.
+    Le matrici devono inoltre soddisfare il vincolo tale per cui la somma degli elementi di ciascuna riga sia pari a zero.\\
+    Un esempio di matrice è quindi il seguente:
+
+  \[
+    Q_X = 
+    \begin{bmatrix}
+      -q_1 & q_{12} & \dots & q_{1n}\\
+      q_{21} & -q_2 & \dots & q_{2n}\\
+      \vdots & \vdots & \ddots & \vdots\\
+      q_{n1} & q_{n2} & \dots & -q_n
+    \end{bmatrix} 
+  \]
+  \[
+    dove \; q_i = \sum_{j \neq i} q_{ij}, \; con \; q_{ij} \geq \; 0 \; \forall \; i, j \in [1, n]
+  \]
+
+  \paragraph{}
+  L'interpretazione della matrice è che i valori \textit{$q_i$}, ovvero quelli che si trovano sulla
+  diagonale, forniscono la probabilità istantanea di lasciare lo stato \textit{$x_i$}, mentre il generico
+  elemento in posizione \textit{(i, j)} indica la probabilità istantanea di effettuare una transizione dallo stato \textit{i} allo stato \textit{j}.\\
+  Si parla di probabilità istantanea, e non di probabilità in senso assoluto, in quanto 
+  i valori che costituiscono una riga non sommano ad uno. È però possibile assimilare un coefficiente al concetto tradizionale di probabilità
+  effettuando una normalizzazione rispetto alla riga a cui esso appartiene. Per considerare un
+  coefficiente $q_{ij}$ come probabilità $p_{ij}$, quindi, si procede come segue:
+  \begin{equation}
+    p_{ij} = \frac{q_{ij}}{\sum_{k \in \{1...n\} \setminus i}q_{ik}}
+  \end{equation}
+
+  Complessivamente, pertanto, la matrice descrive il comportamento istantaneo del processo \textit{X} rispetto
+  allo stato in cui si trova nell'istante corrente.
+
+  \subsection{Conditional Markov Processes}
+  \paragraph{}
+  Un successivo passo verso la definizione delle CTBN è consentito dal concetto di \textbf{processo Markoviano condizionato} (Conditional Markov Process) \cite{nodelman-2007},
+  che è un modello di processo Markoviano \textit{non omogeneo} in cui le intensità di transizione
+  variano con il variare del tempo \textit{t}, ma non in funzione di \textit{t}.\\
+  Le intensità di transizione di una variabile all'istante \textit{t} dipendono invece dal valore che 
+  altre variabili assumono all'istante \textit{t}, con queste ultime che a loro volta evolvono come processi Markoviani.
+  
+  \subsubsection{Conditional Intensity Matrix}
+  \paragraph{}
+  Sia \textit{X} una variabile con dominio \textit{Val(X)} = \{$x_1$, $x_2$, ..., $x_n$\} e sia
+  $\mathbf{P} = \mathbf{Pa}(X)$.\\
+  \textit{X} evolve nel tempo come processo Markoviano le cui variazioni sono condizionate dallo
+  stato delle variabili in $\mathbf{P}$, che a loro volta evolvono al variare del tempo.\\
+  La necessità di esprimere questa dipendenza introduce il concetto di Conditional Intensity Matrix (\textbf{CIM}),
+  sulla base delle matrici di intensità già mostrate. Una CIM, infatti, è sostanzialmente composta da un insieme
+  di matrici di intensità, una per ciascuna istanza \textbf{p} delle variabili \textbf{P}.\\
+  Nel caso limite in cui \textit{X} non ha genitori, la sua CIM corrisponde esattamente ad una semplice
+  matrice di intensità.\\
+  Una notazione che evidenzia la variazione dei parametri della matrice in funzione dei valori di 
+  \textbf{p} è la seguente (in cui chiaramente valgono gli stessi vincoli sui valori della diagonale): 
+
+  \vspace{6mm}
+  \[
+    Q_{X|P} = 
+    \begin{bmatrix}
+      -q_1(P) & q_{12}(P) & \dots & q_{1n}(P)\\
+      q_{21}(P) & -q_2(P) & \dots & q_{2n}(P)\\
+      \vdots & \vdots & \ddots & \vdots\\
+      q_{n1}(P) & q_{n2}(P) & \dots & -q_n(P)
+    \end{bmatrix} 
+  \]
+  \vspace{6mm}
+
+  Una \textit{CIM}  è sempre di forma quadrata, e in particolare di dimensione pari al numero di stati
+  che la variabile \textit{X} a cui essa è associata può assumere, ovvero la sua cardinalità \textit{Card(X)}.

@@ -1,0 +1,26 @@
+\chapter*{Introduzione}
+  \label{chapter_introduzione}
+  \addcontentsline{toc}{chapter}{Introduzione}
+  \paragraph{}
+  Le Reti Bayesiane a Tempo Continuo (CTBN) sono un modello grafico probabilistico nato per rappresentare in modo efficiente sistemi
+  dinamici, in evoluzione, sfruttando i concetti fondanti di altri modelli quali le Reti Bayesiane (BN) 
+  e i Processi Markoviani a Tempo Continuo (CTMP).\\
+  I numerosi domini il cui stato progredisce al trascorrere del tempo (considerato come una quantità continua) costituiscono la naturale applicazione delle CTBN, 
+  che permettono di modellarne l'evoluzione nel tempo.
+  Un possibile esempio si colloca nel contesto dei mercati finanziari, in cui la quotazione di uno
+  stock varia nel tempo e il cui trend è condizionato da diversi fattori, quali l'andamento di altri titoli correlati
+  piuttosto che avvenimenti di carattere politico, sociale o commerciale.\\
+  Il percorso di stage è stato quindi dedicato all'implementazione di nuove funzionalità all'interno
+  della libreria software \textit{PyCTBN}, sviluppata dal \textit{MAD Lab (Models and Algorithms for Data and Text Mining)}
+  allo scopo di mettere a disposizione uno strumento completo ed efficiente per utilizzare
+  il framework delle reti Bayesiane a tempo continuo. In particolare, i nuovi moduli sviluppati
+  vertono sulla generazione randomica di reti e sul processo di campionamento di traiettorie,
+  integrando inoltre utility per l'esportazione su file dei dati prodotti.\\
+  Questa tesi prevede un capitolo introduttivo (Capitolo \ref{chapter_concetti_preliminari}), strutturato in modo da fornire le definizioni
+  fondamentali ed esporre le notazioni di cui si fa uso nei capitoli seguenti, presentando
+  poi i modelli da cui derivano le CTBN. Vengono successivamente illustrate le reti a tempo continuo (Capitolo \ref{chapter_ctbn}), 
+  partendo dalla definizione formale fino ad arrivare ad una dettagliata trattazione che spiega dal
+  punto di vista teorico i concetti e le procedure su cui si basa il lavoro svolto.
+  Infine, l'ultimo capitolo (Capitolo \ref{chapter_pyctbn}) ha lo scopo di documentare la libreria PyCTBN, dedicando ovviamente
+  particolare attenzione alle nuove classi sviluppate, e di discuterne i risultati
+  in termini di efficienza rispetto a velocità di esecuzione e utilizzo della memoria.
