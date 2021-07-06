@@ -153,9 +153,7 @@
   effettui una transizione dallo stato \textit{1} allo stato \textit{2} è quindi 1.0458.\\
   Per quanto riguarda le traiettorie contenute in \textit{samples}, che come detto 
   possono essere molteplici, l'unica puntualizzazione necessaria è volta ad enunciare la convenzione tale per cui
-  ciascuna traiettoria deve terminare con un'osservazione fittizia in cui tutte le variabili hanno valore -1.
-
-  \paragraph{}
+  ciascuna traiettoria deve terminare con un'osservazione fittizia in cui tutte le variabili hanno valore -1.\\
   Lo standard adottato prevede che un file possa contenere la descrizione di più reti distinte,
   quindi il dataset in formato \textit{json} si presenta come un array di oggetti del formato mostrato 
   nell'\textit{Esempio 3.2.1}.
@@ -519,7 +517,7 @@
   \begin{figure}[H]
     \includegraphics[width = \columnwidth]{activity}
     \centering
-    \caption{Diagramma di attività - multi\_trajectory}
+    \caption{Diagramma di Attività - multi\_trajectory}
   \end{figure}
 
   \paragraph{}
@@ -854,7 +852,7 @@
   Questo vantaggio si rivela particolarmente significativo nel caso di esecuzioni onerose.
   Generando infatti 10 traiettorie sulla rete utilizzata nell'esperimento (piuttosto complessa),
   l'esecuzione parallela ha permesso di passare da un tempo di 361.8562 secondi a 136.6533 secondi, con un
-  efficientamento del 58,19\%.
+  efficientamento del 62,24\%.
 
   \begin{figure}[H]
     \includegraphics[width = \columnwidth]{times_multiprocessing}
