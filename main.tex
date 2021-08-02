@@ -1,0 +1,65 @@
+\documentclass[oneside]{book}
+
+\usepackage[italian]{babel}
+\usepackage{bm}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage[italiano, linesnumbered]{algorithm2e}
+\usepackage{graphicx}
+\usepackage{floatrow}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[nottoc]{tocbibind}
+\usepackage{caption}
+
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\baselinestretch}{1.2}
+
+\addtolength{\skip\footins}{2pc plus 5pt}
+
+\newtheorem{definition}{Definizione}[section]
+\newtheorem{exmp}{Esempio}[section]
+\newtheorem{assumption}{Assunzione}
+
+\captionsetup{justification=centering}
+
+\setcounter{tocdepth}{3}
+
+\graphicspath{ {./images/} }
+
+\lstdefinelanguage{json}{
+    basicstyle=\fontsize{10}{11}\ttfamily,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true
+}
+
+\title{CTBN}
+\date{}
+\author{Pietro Epis}
+
+\begin{document}
+  \frontmatter
+
+  \input{chapters/1_dediche.tex}
+
+  \pagebreak
+
+  \tableofcontents
+  \listoffigures
+  \newpage
+
+  \mainmatter
+
+  \input{chapters/2_introduzione.tex}
+  \input{chapters/3_concetti_preliminari.tex}
+  \input{chapters/4_ctbn.tex}    
+  \input{chapters/5_pyctbn.tex}
+  \input{chapters/6_conclusioni.tex}
+
+  \nocite{*}
+  \bibliographystyle{unsrt}
+  \bibliography{main}
+\end{document}
