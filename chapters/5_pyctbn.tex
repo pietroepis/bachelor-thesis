@@ -327,11 +327,11 @@
   congiunto dei due argomenti, infatti \textit{max\_tr} viene ignorato se \textit{t\_end} è diverso da -1
   (che è il valore di default per entrambi).\\ 
   È utile sottolineare come non sia possibile conoscere a priori, prima dell'esecuzione, il numero
-  di campioni di cui sarà composta la traiettoria nel caso in cui venga imposto il tempo massimo
+  di campioni di cui sarà composta la traiettoria nel caso in cui venga stabilito il tempo massimo
   come condizione di terminazione. Viceversa, tale valore è ovviamente noto, in quanto viene imposto, 
   se si utilizza la variante che fa uso del numero di transizioni consentite.\\
   Un'ulteriore dissomiglianza rispetto allo pseudo-codice commentato, consiste nel valore iniziale attribuito
-  alle variabili all'istante $t = 0$: è stato infatti ritenuto ininfluente attribuire a tutte le variabili
+  alle variabili all'istante $t = 0$: è stato infatti ritenuto ininfluente assegnare a tutte le variabili
   il valore 0 piuttosto che determinarlo dalla distribuzione iniziale.\\
   Per la generazione casuale dell'intervallo di tempo $\Delta t$ dopo il quale avverrà la prossima 
   transizione, è stato sfruttato il metodo \textbf{random.exponential}, messo a disposizione da \textit{numpy}.
